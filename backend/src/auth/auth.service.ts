@@ -53,7 +53,9 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.userRepo.findOne({ where: { email: dto.email } });
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        'No account exists with this email. Sign up to create an account.',
+      );
     }
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);

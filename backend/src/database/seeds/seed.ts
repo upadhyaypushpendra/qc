@@ -5,57 +5,50 @@ import * as postgres from 'pg';
 const MONGO_URI =
   process.env.MONGODB_URI || 'mongodb://localhost:27017/groceries';
 const DB_URL =
-  process.env.DATABASE_URL ||
-  'postgresql://L088617@localhost:5432/groceries';
+  process.env.DATABASE_URL || 'postgresql://L088617@localhost:5432/groceries';
 
 const categories = [
   {
     name: 'Fruits & Vegetables',
     slug: 'fruits-vegetables',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Fruits',
+    imageUrl: '/categories/fruits.png',
     sortOrder: 1,
   },
   {
     name: 'Dairy & Eggs',
     slug: 'dairy-eggs',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Dairy',
+    imageUrl: '/categories/dairy.png',
     sortOrder: 2,
   },
   {
     name: 'Bakery',
     slug: 'bakery',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Bakery',
+    imageUrl: '/categories/bakery.png',
     sortOrder: 3,
-  },
-  {
-    name: 'Meat & Seafood',
-    slug: 'meat-seafood',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Meat',
-    sortOrder: 4,
   },
   {
     name: 'Beverages',
     slug: 'beverages',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Drinks',
-    sortOrder: 5,
+    imageUrl: '/categories/drinks.png',
+    sortOrder: 4,
   },
   {
     name: 'Snacks',
     slug: 'snacks',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Snacks',
-    sortOrder: 6,
+    imageUrl: '/categories/snacks.png',
+    sortOrder: 5,
   },
   {
     name: 'Pantry',
     slug: 'pantry',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Pantry',
-    sortOrder: 7,
+    imageUrl: '/categories/pantry.png',
+    sortOrder: 6,
   },
   {
     name: 'Frozen',
     slug: 'frozen',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Frozen',
-    sortOrder: 8,
+    imageUrl: '/categories/frozen.png',
+    sortOrder: 7,
   },
 ];
 
@@ -163,32 +156,6 @@ const products = [
     tags: ['bakery', 'pastry'],
     brand: 'Patisserie',
     description: 'Buttery croissants',
-  },
-  {
-    name: 'Chicken Breast 500g',
-    slug: 'chicken-breast-500g',
-    price: 5.49,
-    comparePrice: 6.99,
-    unit: '500g',
-    categorySlug: 'meat-seafood',
-    inStock: true,
-    stockQty: 70,
-    tags: ['chicken', 'meat'],
-    brand: 'FreshMeat',
-    description: 'Fresh chicken breast',
-  },
-  {
-    name: 'Salmon Fillet 300g',
-    slug: 'salmon-fillet-300g',
-    price: 7.99,
-    comparePrice: null,
-    unit: '300g',
-    categorySlug: 'meat-seafood',
-    inStock: true,
-    stockQty: 25,
-    tags: ['seafood', 'fish'],
-    brand: 'SeaFood Fresh',
-    description: 'Wild caught salmon',
   },
   {
     name: 'Orange Juice 1L',

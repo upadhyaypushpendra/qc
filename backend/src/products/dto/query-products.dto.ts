@@ -25,5 +25,6 @@ export class QueryProductsDto {
   sort: string; // 'price_asc', 'price_desc', 'newest'
 
   @IsOptional()
+  @Type(() => Boolean)
   inStock: boolean;
 }

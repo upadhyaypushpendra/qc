@@ -1,10 +1,23 @@
-import { Controller, Get, Query, Param } from '@nestjs/common';
+import { Controller, Get, Query, Param, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { QueryProductsDto } from './dto/query-products.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
+
+  @Get('top/trending')
+  async getTopProducts() {
+    return this.productsService.getTopProducts();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('recommendations/my-frequent')
+  async getMyFrequentProducts(@CurrentUser() user: any) {
+    return this.productsService.getFrequentProductsByUser(user.sub);
+  }
 
   @Get()
   async findAll(@Query() query: QueryProductsDto) {
