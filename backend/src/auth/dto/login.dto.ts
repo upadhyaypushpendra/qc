@@ -1,9 +1,9 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Matches } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail()
-  email: string;
-
   @IsNotEmpty()
-  password: string;
+  @Matches(/^(\+?[\d\s\-()]{10,}|[^\s@]+@[^\s@]+\.[^\s@]+)$/, {
+    message: 'Identifier must be a valid email or phone number',
+  })
+  identifier: string;
 }

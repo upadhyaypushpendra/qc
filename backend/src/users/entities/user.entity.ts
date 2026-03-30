@@ -13,16 +13,21 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
+export enum IdentifierType {
+  EMAIL = 'email',
+  PHONE = 'phone',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  email: string;
+  @Column({ unique: true, nullable: true })
+  identifier: string;
 
-  @Column()
-  passwordHash: string;
+  @Column({ type: 'enum', enum: IdentifierType, nullable: true })
+  identifierType: IdentifierType;
 
   @Column()
   firstName: string;

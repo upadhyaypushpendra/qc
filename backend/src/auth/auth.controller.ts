@@ -1,37 +1,62 @@
 import { Controller, Post, Body, Res, UseGuards, Get } from '@nestjs/common';
 import type { Response } from 'express';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
+import { User } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { IdentifierRateLimitGuard } from '../otp/guards/identifier-rate-limit.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @InjectRepository(User) private userRepo: Repository<User>,
+  ) {}
 
   @Post('register')
-  async register(@Body() dto: RegisterDto, @Res() res: Response) {
-    const tokens = await this.authService.register(dto);
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.json({ accessToken: tokens.accessToken });
+  @UseGuards(IdentifierRateLimitGuard)
+  async register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res() res: Response) {
-    const tokens = await this.authService.login(dto);
+  @UseGuards(IdentifierRateLimitGuard)
+  async login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
+  }
+
+  @Post('verify-otp')
+  @UseGuards(IdentifierRateLimitGuard)
+  async verifyOtp(@Body() dto: VerifyOtpDto, @Res() res: Response) {
+    const tokens = await this.authService.verifyOtp(dto.identifier, dto.otp);
+    const user = await this.userRepo.findOne({ where: { identifier: dto.identifier } });
+
+    if (!user) {
+      throw new Error('User not found after OTP verification');
+    }
+
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.json({ accessToken: tokens.accessToken });
+    res.json({
+      user: {
+        id: user.id,
+        identifier: user.identifier,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    });
   }
 
   @Post('refresh')

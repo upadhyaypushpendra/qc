@@ -7,10 +7,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { User } from '../users/entities/user.entity';
+import { User, IdentifierType } from '../users/entities/user.entity';
 import { RefreshToken } from '../users/entities/refresh-token.entity';
+import { OtpService } from '../otp/otp.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -21,51 +21,102 @@ export class AuthService {
     private config: ConfigService,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(RefreshToken) private tokenRepo: Repository<RefreshToken>,
+    private otpService: OtpService,
   ) {}
+
+  private detectIdentifierType(identifier: string): IdentifierType {
+    // Simple check: if it contains @, it's email; otherwise it's phone
+    return identifier.includes('@')
+      ? IdentifierType.EMAIL
+      : IdentifierType.PHONE;
+  }
 
   async register(dto: RegisterDto) {
     const existing = await this.userRepo.findOne({
-      where: { email: dto.email },
+      where: { identifier: dto.identifier },
     });
     if (existing) {
       throw new ConflictException('User already exists');
     }
 
-    const hash = await bcrypt.hash(dto.password, 12);
+    const identifierType = this.detectIdentifierType(dto.identifier);
+
     const user = this.userRepo.create({
-      email: dto.email,
-      passwordHash: hash,
+      identifier: dto.identifier,
+      identifierType,
       firstName: dto.firstName,
       lastName: dto.lastName,
     });
 
     await this.userRepo.save(user);
 
-    return this.generateTokens(
-      user.id,
-      user.email,
-      user.role,
-      user.firstName,
-      user.lastName,
-    );
+    // Generate OTP
+    const otpResult = await this.otpService.generate(dto.identifier);
+
+    return {
+      message: 'User registered. OTP sent to your identifier.',
+      identifier: dto.identifier,
+      expiresIn: otpResult.expiresIn,
+      otp: otpResult.otp, // Only for development/testing
+    };
   }
 
   async login(dto: LoginDto) {
-    const user = await this.userRepo.findOne({ where: { email: dto.email } });
+    let user = await this.userRepo.findOne({
+      where: { identifier: dto.identifier },
+    });
+
     if (!user) {
-      throw new UnauthorizedException(
-        'No account exists with this email. Sign up to create an account.',
-      );
+      // Auto-create user if doesn't exist (for development)
+      const identifierType = this.detectIdentifierType(dto.identifier);
+
+      user = this.userRepo.create({
+        identifier: dto.identifier,
+        identifierType,
+        firstName: 'Guest',
+        lastName: 'User',
+      });
+
+      await this.userRepo.save(user);
     }
 
-    const valid = await bcrypt.compare(dto.password, user.passwordHash);
-    if (!valid) {
-      throw new UnauthorizedException('Invalid credentials');
+    // Generate OTP
+    const otpResult = await this.otpService.generate(dto.identifier);
+
+    return {
+      message: `OTP sent to your ${user.identifierType.toLowerCase()}.`,
+      identifier: dto.identifier,
+      identifierType: user.identifierType,
+      expiresIn: otpResult.expiresIn,
+      otp: otpResult.otp, // Only for development/testing
+    };
+  }
+
+  async verifyOtp(identifier: string, otp: string) {
+    // Verify OTP
+    await this.otpService.verify(identifier, otp);
+
+    // Get user
+    let user = await this.userRepo.findOne({
+      where: { identifier },
+    });
+
+    if (!user) {
+      // Auto-create user if doesn't exist
+      const identifierType = this.detectIdentifierType(identifier);
+      user = this.userRepo.create({
+        identifier,
+        identifierType,
+        firstName: 'Guest',
+        lastName: 'User',
+      });
+      await this.userRepo.save(user);
     }
 
+    // Generate tokens
     return this.generateTokens(
       user.id,
-      user.email,
+      user.identifier,
       user.role,
       user.firstName,
       user.lastName,
@@ -96,8 +147,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const valid = await bcrypt.compare(refreshToken, record.tokenHash);
-    if (!valid) {
+    // Compare token hash with stored hash
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(refreshToken)
+      .digest('hex');
+
+    if (tokenHash !== record.tokenHash) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -110,7 +166,7 @@ export class AuthService {
     }
     return this.generateTokens(
       user.id,
-      user.email,
+      user.identifier,
       user.role,
       user.firstName,
       user.lastName,
@@ -123,12 +179,12 @@ export class AuthService {
 
   private async generateTokens(
     userId: string,
-    email: string,
+    identifier: string,
     role: string,
     firstName?: string,
     lastName?: string,
   ) {
-    const payload = { sub: userId, email, role, firstName, lastName };
+    const payload = { sub: userId, identifier, role, firstName, lastName };
     const secret =
       this.config.get<string>('jwt.secret') ||
       'dev_jwt_secret_do_not_use_in_production_12345';
@@ -150,7 +206,10 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    const refreshTokenHash = await bcrypt.hash(refreshTokenPlain, 12);
+    const refreshTokenHash = crypto
+      .createHash('sha256')
+      .update(refreshTokenPlain)
+      .digest('hex');
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
     await this.tokenRepo.save({

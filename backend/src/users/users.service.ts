@@ -44,7 +44,11 @@ export class UsersService {
     return this.addressRepo.save(address);
   }
 
-  async updateAddress(userId: string, addressId: string, dto: UpdateAddressDto) {
+  async updateAddress(
+    userId: string,
+    addressId: string,
+    dto: UpdateAddressDto,
+  ) {
     const address = await this.addressRepo.findOne({
       where: { id: addressId, userId },
     });
