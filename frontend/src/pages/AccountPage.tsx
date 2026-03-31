@@ -27,7 +27,7 @@ export default function AccountPage() {
           <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-brand-700">Identifier</p>
+                <p className="text-sm font-semibold text-brand-700">Phone</p>
                 <p className="text-xs text-brand-600 mt-1">{user?.identifier}</p>
               </div>
               <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-900 text-green-300">
@@ -48,7 +48,7 @@ export default function AccountPage() {
           </div>
 
           {/* Phone (placeholder) */}
-          <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
+          {/* <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-semibold text-brand-700">Phone Number</p>
@@ -56,7 +56,7 @@ export default function AccountPage() {
               </div>
               <span className="text-2xl">📱</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Preferences */}
           <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
@@ -104,7 +104,7 @@ export default function AccountPage() {
           </button>
 
           {/* Settings (placeholder) */}
-          <button
+          {/* <button
             disabled
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left opacity-60 cursor-not-allowed"
           >
@@ -115,10 +115,10 @@ export default function AccountPage() {
                 <p className="text-sm text-brand-600 mt-1">Coming soon</p>
               </div>
             </div>
-          </button>
+          </button> */}
 
           {/* Help (placeholder) */}
-          <button
+          {/* <button
             disabled
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left opacity-60 cursor-not-allowed"
           >
@@ -129,18 +129,18 @@ export default function AccountPage() {
                 <p className="text-sm text-brand-600 mt-1">Coming soon</p>
               </div>
             </div>
-          </button>
+          </button> */}
         </div>
       </div>
 
       {/* Account Actions */}
       <div className="space-y-3">
-        <button
+        {/* <button
           disabled
           className="w-full bg-brand-50 text-brand-600 py-3 rounded-lg font-bold border-2 border-brand-200 opacity-60 cursor-not-allowed transition hover:opacity-40"
         >
           ✏️ Edit Profile
-        </button>
+        </button> */}
         <button
           onClick={handleLogout}
           disabled={logout.isPending}

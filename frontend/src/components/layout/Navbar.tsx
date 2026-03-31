@@ -20,7 +20,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           {isHome ? (
             <Link to="/" className="flex items-center gap-2">
-              <img src={'/AppLogoFull.png'} alt="QuickGrocery" className="h-12 w-auto" />
+              <img src={'/AppLogoFull.png'} alt="QuickGrocery" className="h-10 w-auto" />
             </Link>
           ) : (
             <>
