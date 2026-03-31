@@ -21,6 +21,7 @@ export default function ProductCard({ product, onAddToCart, isAddingToCart = fal
 
   // Handle add to cart with blink effect
   const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsBlinking(true);
     onAddToCart(product);
@@ -39,14 +40,20 @@ export default function ProductCard({ product, onAddToCart, isAddingToCart = fal
   };
 
   return (
-    <Link to={`/products/${product.slug}`} className="bg-brand-50 shadow-md border-brand-100 rounded-lg overflow-visible hover:shadow-lg hover:border-brand-400 transition">
+    <Link to={`/products/${product.slug}`} className="rounded-lg overflow-visible transition">
       <div className="relative">
-        <img src={product.imageUrl} alt={product.name} className={`w-full ${small ? 'h-20' : 'h-40'} object-cover bg-gray-200 rounded-t-lg`} />
+        <img src={product.imageUrl} alt={product.name} className={`w-full ${small ? 'h-20' : 'h-40'} object-cover bg-gray-200 rounded-lg shadow-md`} />
         {!small && (
           <>
             {cartItem ? (
               // Show ItemQuantity if item is in cart
-              <div className={`absolute bottom-0 right-2 translate-y-1/4 bg-white rounded p-2 shadow-md ${isBlinking ? 'animate-blink' : ''}`}>
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className={`absolute bottom-0 right-2 translate-y-1/4 bg-white rounded p-2 shadow-md ${isBlinking ? 'animate-blink' : ''}`}
+              >
                 <ItemQuantity
                   quantity={cartItem.quantity}
                   onQuantityChange={handleQuantityChange}
@@ -67,21 +74,18 @@ export default function ProductCard({ product, onAddToCart, isAddingToCart = fal
           </>
         )}
       </div>
-      <div className={`${small ? 'p-2' : 'pt-6 pb-3 px-3'}`}>
+      <div className={`${small ? 'p-2' : 'pt-6 pb-3 px-0'}`}>
+        <p className="text-xs text-brand-600 mt-1">{product.unit}</p>
         <span className={`text-black ${small ? 'text-sm' : 'text-md'}`}>
-          {product.name}
+          {product.brand}&nbsp;{product.name}
         </span>
         {!small && (
-          <>
-            <p className="text-sm text-brand-600 mt-1">{product.unit}</p>
-            {product.brand && (<p className="text-xs text-brand-500">{product.brand}</p>)}
-            <div className="flex items-center justify-between mt-2">
-              <span className="font-bold text-sm text-brand-300">Rs. {product.price.toFixed(2)}</span>
+          <div className='mt-1'>
+              <p className="font-bold text-sm text-black">Rs. {product.price.toFixed(2)}</p>
               {product.comparePrice && (
-                <span className="line-through text-brand-300 text-sm">Rs. {product.comparePrice.toFixed(2)}</span>
+                <p className="line-through text-black text-xs">Rs. {product.comparePrice.toFixed(2)}</p>
               )}
-            </div>
-          </>
+          </div>
         )}
       </div>
     </Link>

@@ -31,7 +31,7 @@ function Products({ subCategoryId }: { subCategoryId?: string }) {
     </div>
   ) : (
     <>
-      <div className="grid grid-cols-2 gap-2 mb-8">
+      <div className="grid grid-cols-2 gap-2 mb-8 items-start">
         {data?.data?.map((product: any) => (
           <ProductCard
             key={product._id}
