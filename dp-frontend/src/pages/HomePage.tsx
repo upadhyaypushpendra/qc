@@ -97,6 +97,7 @@ export default function HomePage() {
             <ActiveDelivery
               order={liveActiveDelivery}
               onDelivered={() => void refetch()}
+              onRejected={()=> void refetch()}
             />
           ) : (
             <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-brand-300">

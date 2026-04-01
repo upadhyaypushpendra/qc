@@ -25,9 +25,10 @@ interface ActiveDeliveryProps {
     };
   };
   onDelivered?: () => void;
+  onRejected?: () => void;
 }
 
-export default function ActiveDelivery({ order, onDelivered }: ActiveDeliveryProps) {
+export default function ActiveDelivery({ order, onDelivered, onRejected }: ActiveDeliveryProps) {
   const updateOrderStatus = useUpdateOrderStatus();
   const markDeliveredMutation = useMarkDelivered();
 
@@ -181,6 +182,7 @@ export default function ActiveDelivery({ order, onDelivered }: ActiveDeliveryPro
           </button>
         )}
         {canMarkDelivered && (
+          <>
           <button
             onClick={() => {
               markDeliveredMutation.mutate(order.id, {
@@ -198,6 +200,24 @@ export default function ActiveDelivery({ order, onDelivered }: ActiveDeliveryPro
           >
             {markDeliveredMutation.isPending ? '✓ Marking Delivered...' : '✓ Mark Delivered'}
           </button>
+          <button
+            onClick={() => {
+              updateOrderStatus.mutate({orderId: order.id, status: 'cancelled'}, {
+                onSuccess: () => {
+                  toast.success('Order marked as rejected! ✗');
+                  if (onRejected) onRejected();
+                },
+                onError: (error: unknown) => {
+                  toast.error(getApiErrorMessage(error, 'Failed to mark as rejected'));
+                },
+              });
+            }}
+            disabled={isUpdating}
+            className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+          >
+            {updateOrderStatus.isPending ? '✗ Marking Rejected...' : '✗ Mark Rejected'}
+          </button>
+          </>
         )}
         </div>
       </div>

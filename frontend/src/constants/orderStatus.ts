@@ -38,7 +38,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, { next: string; done: stri
     done: 'Reached Destination',
   },
   delivered: {
-    next: 'Delivered',
+    next: 'Be ready to collect your order',
     done: 'Delivered',
   },
   cancelled: {
@@ -98,7 +98,7 @@ export const COMPLETED_ORDER_FINAL_STATUSES: OrderStatus[] = [
 export const formatOrderStatus = (status: string): string => {
   const typedStatus = status as OrderStatus;
   if (ORDER_STATUS_LABELS[typedStatus]) {
-    return ORDER_STATUS_LABELS[typedStatus].next;
+    return ORDER_STATUS_LABELS[typedStatus].done;
   }
 
   return status

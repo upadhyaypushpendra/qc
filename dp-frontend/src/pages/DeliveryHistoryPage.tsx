@@ -10,7 +10,7 @@ export default function OrderHistoryPage() {
   const completedOrders = orders?.filter((order) => order.completed) || [];
 
   return (
-    <div>
+    <div className='p-4'>
       <h1 className="text-3xl font-bold mb-6 text-brand-700">Delivery History</h1>
 
       {isLoading ? (
@@ -29,10 +29,10 @@ export default function OrderHistoryPage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm text-brand-600">Order #{order.id.slice(0, 8)}</p>
-                    <p className="font-bold text-lg text-brand-800">Rs. {Number(order.totalAmount).toFixed(2)}</p>
                     <p className="text-sm text-brand-600 mt-1">
                       {new Date(order.createdAt).toLocaleString()}
                     </p>
+                    <p className="font-bold text-lg text-green-800">Rs. {Number(order.deliveryFee).toFixed(2)}+</p>
                   </div>
                   <span className={`px-3 py-1 rounded text-sm font-bold ${colors.bg} ${colors.text}`}>
                     {formatOrderStatus(order.status)}
