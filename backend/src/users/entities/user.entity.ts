@@ -5,11 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { Address } from './address.entity';
 
 export enum UserRole {
   USER = 'user',
+  DELIVERY_PARTNER = 'delivery_partner',
   ADMIN = 'admin',
 }
 
@@ -19,11 +21,12 @@ export enum IdentifierType {
 }
 
 @Entity('users')
+@Unique(['identifier', 'role'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ nullable: true })
   identifier: string;
 
   @Column({ type: 'enum', enum: IdentifierType, nullable: true })

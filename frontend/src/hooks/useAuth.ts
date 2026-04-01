@@ -10,6 +10,7 @@ interface RegisterRequest {
   firstName: string;
   lastName: string;
   identifier: string;
+  role: 'user';
 }
 
 interface VerifyOtpRequest {
@@ -44,7 +45,10 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (data: LoginRequest) => {
-      const response = await apiClient.post<OtpResponse>('/auth/login', data);
+      const response = await apiClient.post<OtpResponse>('/auth/login', {
+        ...data,
+        role: 'user',
+      });
       return response.data;
     },
     onError: (error: any) => {
@@ -61,8 +65,11 @@ export function useRegister() {
   const { setError } = useAuthStore();
 
   return useMutation({
-    mutationFn: async (data: RegisterRequest) => {
-      const response = await apiClient.post<OtpResponse>('/auth/register', data);
+    mutationFn: async (data: Omit<RegisterRequest, 'role'>) => {
+      const response = await apiClient.post<OtpResponse>('/auth/register', {
+        ...data,
+        role: 'user',
+      });
       return response.data;
     },
     onError: (error: any) => {
@@ -81,10 +88,17 @@ export function useVerifyOtp() {
   return useMutation({
     mutationFn: async (data: VerifyOtpRequest) => {
       setError(null); // Clear any previous errors before making request
-      const response = await apiClient.post<AuthResponse>('/auth/verify-otp', data);
+      const response = await apiClient.post<AuthResponse>('/auth/verify-otp', {
+        ...data,
+        role: 'user',
+      });
       return response.data;
     },
     onSuccess: (data) => {
+      if (data.user.role !== 'user') {
+        setError('This app is for customers only. Please use the correct app.');
+        return;
+      }
       setAuth(data.user, data.accessToken);
       setError(null); // Explicitly clear error on success
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
@@ -117,7 +131,7 @@ export function useLogout() {
  * Fetch current user
  */
 export function useMe() {
-  const { user, accessToken, setAuth } = useAuthStore();
+  const { user, accessToken } = useAuthStore();
 
   return useQuery({
     queryKey: ['auth', 'me'],
@@ -126,9 +140,6 @@ export function useMe() {
       return response.data;
     },
     enabled: !!accessToken && !user,
-    onSuccess: (data) => {
-      setAuth(data.user, data.accessToken);
-    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
-import { User, IdentifierType } from '../users/entities/user.entity';
+import { User, UserRole, IdentifierType } from '../users/entities/user.entity';
 import { RefreshToken } from '../users/entities/refresh-token.entity';
 import { Location } from '../location/entities/location.entity';
 import { OtpService } from '../otp/otp.service';
@@ -35,8 +35,10 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
+    const role = dto.role ?? UserRole.USER;
+
     const existing = await this.userRepo.findOne({
-      where: { identifier: dto.identifier },
+      where: { identifier: dto.identifier, role },
     });
     if (existing) {
       throw new ConflictException('User already exists');
@@ -49,6 +51,7 @@ export class AuthService {
       identifierType,
       firstName: dto.firstName,
       lastName: dto.lastName,
+      role,
     });
 
     await this.userRepo.save(user);
@@ -65,12 +68,13 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.userRepo.findOne({
-      where: { identifier: dto.identifier },
-    });
+    const where = dto.role
+      ? { identifier: dto.identifier, role: dto.role }
+      : { identifier: dto.identifier };
+
+    const user = await this.userRepo.findOne({ where });
 
     if (!user) {
-      // Throw Account Not Found Exception ask user to register first
       throw new BadRequestException(
         'Account not found. Please register before logging in.',
       );
@@ -88,14 +92,12 @@ export class AuthService {
     };
   }
 
-  async verifyOtp(identifier: string, otp: string) {
+  async verifyOtp(identifier: string, otp: string, role?: UserRole) {
     // Verify OTP
     await this.otpService.verify(identifier, otp);
 
-    // Get user
-    let user = await this.userRepo.findOne({
-      where: { identifier },
-    });
+    const where = role ? { identifier, role } : { identifier };
+    let user = await this.userRepo.findOne({ where });
 
     if (!user) {
       // Auto-create user if doesn't exist
@@ -105,6 +107,7 @@ export class AuthService {
         identifierType,
         firstName: 'Guest',
         lastName: 'User',
+        role: role ?? UserRole.USER,
       });
       await this.userRepo.save(user);
     }

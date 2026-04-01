@@ -47,8 +47,6 @@ export class ProductsService {
       filter.inStock = inStock;
     }
 
-    console.log(filter);
-
     const sortObj: any = {};
     let pipeline: any[] = [];
 

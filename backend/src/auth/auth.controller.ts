@@ -33,7 +33,7 @@ export class AuthController {
   @Post('verify-otp')
   @UseGuards(IdentifierRateLimitGuard)
   async verifyOtp(@Body() dto: VerifyOtpDto, @Res() res: Response) {
-    const tokens = await this.authService.verifyOtp(dto.identifier, dto.otp);
+    const tokens = await this.authService.verifyOtp(dto.identifier, dto.otp, dto.role);
     const user = await this.userRepo.findOne({
       where: { identifier: dto.identifier },
     });

@@ -68,7 +68,6 @@ export class ProductsController {
   @Roles('admin')
   @Get('admin/list')
   async getAdminProducts(@Query() query: QueryProductsDto) {
-    console.log('Admin query: ' + JSON.stringify(query));
     return this.productsService.findAllAdmin(query);
   }
 

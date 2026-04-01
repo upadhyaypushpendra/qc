@@ -55,10 +55,10 @@ export function useVerifyOtp() {
   return useMutation({
     mutationFn: async (data: VerifyOtpRequest) => {
       setError(null);
-      const response = await apiClient.post<AuthResponse>(
-        '/auth/verify-otp',
-        data,
-      );
+      const response = await apiClient.post<AuthResponse>('/auth/verify-otp', {
+        ...data,
+        role: 'admin',
+      });
       return response.data;
     },
     onSuccess: (data) => {
