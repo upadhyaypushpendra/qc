@@ -14,7 +14,7 @@ export function useAddToCart() {
       });
       return response.data;
     },
-    onSuccess: (data, item) => {
+    onSuccess: (_, item) => {
       addItem(item);
     },
     onError: () => {

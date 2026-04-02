@@ -1,6 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSubcategories } from '../hooks/useProducts';
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSubcategories } from '../hooks/useProducts';
 
 interface Category {
   _id: string;

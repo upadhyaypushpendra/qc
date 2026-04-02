@@ -1,13 +1,14 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState, useEffect } from 'react';
-import { useAuthStore } from '../stores/authStore';
-import type { StatusEvent } from '../hooks/useOrderTracking';
 import {
   ORDER_STATUS_COLORS,
   ORDER_STATUS_ICONS,
   ORDER_STATUS_LABELS,
   type OrderStatus,
 } from '../constants/orderStatus';
+
+import { useAuthStore } from '../stores/authStore';
+import type { StatusEvent } from '../interfaces/orderTracking';
 
 interface Order {
   id: string;

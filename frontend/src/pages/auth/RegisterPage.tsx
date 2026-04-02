@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
   // Timer for resend OTP
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number;
     if (resendTimer > 0) {
       interval = setInterval(() => {
         setResendTimer((prev) => prev - 1);
