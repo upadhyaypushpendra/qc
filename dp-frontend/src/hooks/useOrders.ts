@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import type { OrderStatus } from '../constants/orderStatus';
 import { toNumber, toOptionalNumber } from '../lib/parsers';
+import { refreshAccessToken } from '../lib/refreshAccessToken';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -60,41 +61,62 @@ const normalizeOrder = (order: Record<string, unknown>): Order => ({
   statusHistory: Array.isArray(order.statusHistory) ? order.statusHistory : [],
 }) as Order;
 
+const INITIAL_RETRY_DELAY = 2_000;
+const MAX_RETRY_DELAY = 30_000;
+
 export function useOrders() {
   const token = useAuthStore((s) => s.accessToken);
   const [data, setData] = useState<Order[]>([]);
-  // Start as loading when a token is present; idle when logged out
   const [isLoading, setIsLoading] = useState(!!token);
+  const retryDelayRef = useRef(INITIAL_RETRY_DELAY);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (!token) return;
 
-    const es = new EventSource(`/api/orders/assigned/stream?token=${token}`);
+    let es: EventSource;
 
-    es.onmessage = (e) => {
-      try {
-        const msg = JSON.parse(e.data);
-        if (msg.type === 'orders' && Array.isArray(msg.orders)) {
-          setData(msg.orders.filter(isRecord).map(normalizeOrder));
-          setIsLoading(false);
+    const connect = () => {
+      const currentToken = useAuthStore.getState().accessToken;
+      if (!currentToken) return;
+      es = new EventSource(`/api/orders/assigned/stream?token=${currentToken}`);
+
+      es.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'orders' && Array.isArray(msg.orders)) {
+            setData(msg.orders.filter(isRecord).map(normalizeOrder));
+            setIsLoading(false);
+            retryDelayRef.current = INITIAL_RETRY_DELAY;
+          }
+        } catch {
+          // ignore parse errors
         }
-      } catch {
-        // ignore parse errors
-      }
+      };
+
+      es.onerror = () => {
+        es.close();
+        setIsLoading(false);
+        refreshAccessToken()
+          .catch(() => {/* clearAuth + redirect handled inside refreshAccessToken */})
+          .finally(() => {
+            retryTimerRef.current = setTimeout(() => {
+              retryDelayRef.current = Math.min(retryDelayRef.current * 2, MAX_RETRY_DELAY);
+              connect();
+            }, retryDelayRef.current);
+          });
+      };
     };
 
-    es.onerror = () => {
-      es.close();
-      setIsLoading(false);
-    };
+    connect();
 
     return () => {
-      es.close();
+      clearTimeout(retryTimerRef.current);
+      es?.close();
       setData([]);
     };
   }, [token]);
 
-  // refetch is a no-op — updates arrive via SSE
   const refetch = () => {};
 
   return { data, isLoading, refetch };
