@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useLogout, useUpdateProfile } from '../hooks/useAuth';
 import { useWallet } from '../hooks/useWallet';
 import toast from 'react-hot-toast';
+import { User, Wallet, ClipboardList, Pencil, CreditCard, LogOut, Loader2 } from 'lucide-react';
 
 export default function AccountPage() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function AccountPage() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-brand-600">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-brand-700">👤 {displayName}</h1>
+              <h1 className="text-3xl font-bold text-brand-700 flex items-center gap-2"><User className="w-7 h-7" /> {displayName}</h1>
               <p className="text-brand-600 mt-1">{user?.identifier}</p>
             </div>
             <button
@@ -60,19 +61,19 @@ export default function AccountPage() {
                 setLastName(user?.lastName ?? '');
                 setEditOpen(true);
               }}
-              className="px-4 py-2 border-2 border-brand-300 text-brand-700 rounded-lg font-semibold hover:bg-brand-50 transition text-sm"
+              className="p-4 border-2 border-brand-300 text-brand-700 rounded-lg font-semibold hover:bg-brand-50 transition text-sm flex items-center gap-1"
             >
-              ✏️ Edit Profile
+              <Pencil className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Wallet Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-2xl font-bold text-brand-700 mb-6">💰 Wallet & Earnings</h2>
+          <h2 className="text-2xl font-bold text-brand-700 mb-6 flex items-center gap-2"><Wallet className="w-6 h-6" /> Wallet & Earnings</h2>
           {walletLoading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin">⏳</div>
+              <div className="animate-spin"><Loader2 className="w-5 h-5 animate-spin" /></div>
               <p className="ml-2 text-brand-600">Loading wallet data...</p>
             </div>
           ) : (
@@ -103,7 +104,7 @@ export default function AccountPage() {
 
         {/* Account Details */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-2xl font-bold text-brand-700 mb-4">📋 Account Details</h2>
+          <h2 className="text-2xl font-bold text-brand-700 mb-4 flex items-center gap-2"><ClipboardList className="w-6 h-6" /> Account Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border-l-4 border-brand-300 pl-4">
               <p className="text-sm text-brand-600 font-semibold">First Name</p>
@@ -128,16 +129,16 @@ export default function AccountPage() {
         <div className="space-y-3">
           <button
             disabled
-            className="w-full bg-brand-50 text-brand-600 py-3 rounded-lg font-bold border-2 border-brand-200 opacity-60 cursor-not-allowed transition"
+            className="w-full bg-brand-50 text-brand-600 py-3 rounded-lg font-bold border-2 border-brand-200 opacity-60 cursor-not-allowed transition flex items-center justify-center gap-2"
           >
-            💳 Request Withdrawal
+            <CreditCard className="w-4 h-4" /> Request Withdrawal
           </button>
           <button
             onClick={handleLogout}
             disabled={logout.isPending}
             className="w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 disabled:bg-red-300 transition"
           >
-            {logout.isPending ? 'Logging out...' : '🚪 Logout'}
+            {logout.isPending ? 'Logging out...' : <span className="flex items-center justify-center gap-2"><LogOut className="w-4 h-4" /> Logout</span>}
           </button>
         </div>
       </div>

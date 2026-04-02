@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import toast from 'react-hot-toast';
+import { Phone, Edit2, Trash } from 'lucide-react';
 
 interface Address {
   id: string;
@@ -65,7 +66,7 @@ export default function AddressesPage() {
                   <p className="text-gray-300">
                     {address.city}, {address.postcode}
                   </p>
-                  {address.phone && <p className="text-gray-300">📱 {address.phone}</p>}
+                  {address.phone && <p className="text-gray-300 flex items-center gap-1"><Phone className="w-3 h-3" /> {address.phone}</p>}
                   {address.isDefault && (
                     <span className="inline-block mt-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
                       Default
@@ -75,15 +76,15 @@ export default function AddressesPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => navigate(`/addresses/${address.id}/edit`)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
                   >
-                    Edit
+                    <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setDeleteId(address.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    className="bg-red-500 text-white p-3 rounded hover:bg-red-600"
                   >
-                    Delete
+                    <Trash className="w-4 h-4" />
                   </button>
                 </div>
               </div>

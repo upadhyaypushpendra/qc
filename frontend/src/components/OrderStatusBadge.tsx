@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   ORDER_STATUS_COLORS,
   ORDER_STATUS_ICONS,
@@ -75,6 +76,7 @@ export default function OrderStatusBadge({ orders = [], sticky = true }: OrderSt
   }, [currentStatusEvents, currentOrder.status]);
 
   const colors = ORDER_STATUS_COLORS[currentStatus];
+  const StatusIcon = ORDER_STATUS_ICONS[currentStatus];
 
   const handlePrevious = () => {
     setDisplayIndex((prev) => (prev - 1 + orders.length) % orders.length);
@@ -93,15 +95,15 @@ export default function OrderStatusBadge({ orders = [], sticky = true }: OrderSt
         {orders.length > 1 && (
           <span className={`text-xs font-bold ${colors.text}`}>{displayIndex + 1}/{orders.length}</span>
         )}
-        <div className="text-2xl flex-shrink-0">{ORDER_STATUS_ICONS[currentStatus]}</div>
+        <StatusIcon className={`w-5 h-5 flex-shrink-0 ${colors.text}`} />
         <div className="flex-1">
           <p className={`font-bold ${colors.text} text-sm`}>{ORDER_STATUS_LABELS[currentStatus].done}</p>
           <p className="text-xs text-gray-400 mt-1">Order #{currentOrder.id.slice(-8)}</p>
         </div>
         <button
-          className={`w-8 h-8 p-1 ${colors.text} font-medium text-xs border border-current rounded-full hover:opacity-80 transition`}
+          className={`w-8 h-8 p-1 ${colors.text} font-medium text-xs border border-current rounded-full hover:opacity-80 transition flex items-center justify-center`}
         >
-          →
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
@@ -112,7 +114,7 @@ export default function OrderStatusBadge({ orders = [], sticky = true }: OrderSt
             onClick={handlePrevious}
             className={`p-1 ${colors.text} hover:opacity-60 transition`}
           >
-            ←
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="flex gap-1 flex-1 justify-center">
             {orders.map((_, idx) => (
@@ -128,7 +130,7 @@ export default function OrderStatusBadge({ orders = [], sticky = true }: OrderSt
             onClick={handleNext}
             className={`p-1 ${colors.text} hover:opacity-60 transition`}
           >
-            →
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}

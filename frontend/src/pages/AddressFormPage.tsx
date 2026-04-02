@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import toast from 'react-hot-toast';
+import { MapPin } from 'lucide-react';
 
 interface Address {
   id?: string;
@@ -214,7 +215,7 @@ export default function AddressFormPage() {
 
         {/* Location Coordinates */}
         <div className="bg-gray-800 p-3 rounded border-2 border-blue-800">
-          <p className="text-sm font-semibold text-blue-300 mb-2">📍 Location Coordinates</p>
+          <p className="text-sm font-semibold text-blue-300 mb-2 flex items-center gap-1"><MapPin className="w-3 h-3" /> Location Coordinates</p>
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <p className="text-gray-400 font-semibold">Latitude</p>
@@ -248,7 +249,7 @@ export default function AddressFormPage() {
             onClick={handleMapPin}
             className="w-full bg-blue-500 text-white py-2 rounded font-bold hover:bg-blue-600"
           >
-            📍 {formData.latitude ? 'Change Location' : 'Pin Location on Map'}
+            <MapPin className="w-4 h-4 mr-1 inline" /> {formData.latitude ? 'Change Location' : 'Pin Location on Map'}
           </button>
           <p className="text-xs text-gray-400 mt-2">
             {formData.latitude

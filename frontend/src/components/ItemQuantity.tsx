@@ -11,7 +11,7 @@ export default function ItemQuantity({
   quantity,
   onQuantityChange,
   isLoading = false,
-  minQuantity = 1,
+  minQuantity = 0,
   maxQuantity = 8,
   isBlinking = false,
 }: ItemQuantityProps) {
@@ -33,7 +33,7 @@ export default function ItemQuantity({
         e.preventDefault();
         e.stopPropagation();
       }}
-      className={`rounded-md bg-brand-500 p-1 shadow-md ${isBlinking ? 'animate-blink' : ''}`}
+      className={`rounded-md bg-brand-500 p-1 shadow-md w-fit ${isBlinking ? 'animate-blink' : ''}`}
     >
       <div className="flex items-center gap-2">
         <button

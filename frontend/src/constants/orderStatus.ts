@@ -1,3 +1,14 @@
+import {
+  Clock,
+  CheckCircle,
+  Package,
+  Truck,
+  MapPin,
+  PackageCheck,
+  XCircle,
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
 export const ORDER_STATUSES = [
   'pending',
   'accepted',
@@ -47,14 +58,14 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, { next: string; done: stri
   },
 };
 
-export const ORDER_STATUS_ICONS: Record<OrderStatus, string> = {
-  pending: '⏳',
-  accepted: '✅',
-  going_for_pickup: '🏃',
-  out_for_delivery: '🚚',
-  reached: '📍',
-  delivered: '✓',
-  cancelled: '✗',
+export const ORDER_STATUS_ICONS: Record<OrderStatus, LucideIcon> = {
+  pending: Clock,
+  accepted: CheckCircle,
+  going_for_pickup: Package,
+  out_for_delivery: Truck,
+  reached: MapPin,
+  delivered: PackageCheck,
+  cancelled: XCircle,
 };
 
 export const ORDER_STATUS_COLORS: Record<OrderStatus, OrderStatusColor> = {

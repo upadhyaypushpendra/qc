@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
+import { Search } from 'lucide-react';
 import { useAddToCart } from '../hooks/useCart';
 import { useMyFrequentProducts, useProducts, useTopProducts } from '../hooks/useProducts';
 import { useProductSuggestions } from '../hooks/useProductSuggestions';
@@ -70,7 +71,7 @@ export default function SearchProductPage() {
       {/* Sticky Search Bar */}
       <div className="sticky top-0 z-10 bg-gray-900 pb-2 border-b-2 border-brand-200">
         <div className="flex items-center gap-3 w-full max-w-2xl bg-gray-800 border-2 border-brand-300 rounded-lg px-4 py-2 hover:border-brand-600 transition cursor-pointer hover:shadow-md">
-          <span className="text-2xl text-brand-600 flex-shrink-0">🔍</span>
+          <Search className="w-5 h-5 text-brand-600 flex-shrink-0" />
           <input
             type="text"
             placeholder="Search products by name, brand, tags..."

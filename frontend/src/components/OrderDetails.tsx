@@ -1,3 +1,4 @@
+import { MapPin, Phone } from 'lucide-react';
 import type { Order } from "../interfaces/orders";
 
 
@@ -26,7 +27,7 @@ export default function OrderDetails({ order }: { order: Order }) {
 
       {/* Delivery Address */}
       <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6">
-        <h2 className="font-bold mb-4 text-brand-700 text-lg">📍 Delivery Address</h2>
+        <h2 className="font-bold mb-4 text-brand-700 text-lg flex items-center gap-2"><MapPin className="w-4 h-4" /> Delivery Address</h2>
         <div className="space-y-2">
           <p className="font-medium text-brand-800">{order.addressSnapshot.line1}</p>
           {order.addressSnapshot.line2 && (
@@ -36,7 +37,7 @@ export default function OrderDetails({ order }: { order: Order }) {
             {order.addressSnapshot.city}, {order.addressSnapshot.postcode}
           </p>
           {order.addressSnapshot.phone && (
-            <p className="text-sm text-brand-600 mt-3">📞 {order.addressSnapshot.phone}</p>
+            <p className="text-sm text-brand-600 mt-3 flex items-center gap-1"><Phone className="w-3 h-3" /> {order.addressSnapshot.phone}</p>
           )}
         </div>
       </div>

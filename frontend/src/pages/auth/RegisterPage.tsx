@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRegister, useVerifyOtp, useResendOtp } from '../../hooks/useAuth';
+import { Pin } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import toast from 'react-hot-toast';
 
@@ -147,7 +148,7 @@ export default function RegisterPage() {
             {displayOtp && (
               <div className="bg-blue-950 border-2 border-blue-800 rounded-lg p-4 mb-4">
                 <p className="text-sm font-medium text-blue-300">
-                  📌 Development Mode — OTP: <span className="font-bold text-lg">{displayOtp}</span>
+                  <Pin className="w-3 h-3 inline mr-1" /> Development Mode — OTP: <span className="font-bold text-lg">{displayOtp}</span>
                 </p>
               </div>
             )}

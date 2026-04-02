@@ -3,6 +3,7 @@ import {
   ORDER_STATUS_LABELS,
   type OrderStatus,
 } from '../constants/orderStatus';
+import type { LucideIcon } from 'lucide-react';
 
 interface StatusEvent {
   status: OrderStatus;
@@ -36,7 +37,7 @@ export default function OrderStatusTimeline({
       <div className={`mb-12 p-6 ${bgColor} border-2 ${borderColor} rounded-lg`}>
         <div className="flex gap-4 items-start">
           <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white ${iconBg} flex-shrink-0 text-lg`}>
-            {ORDER_STATUS_ICONS[currentStatus]}
+            {(() => { const Icon = ORDER_STATUS_ICONS[currentStatus] as LucideIcon; return <Icon className="w-5 h-5" />; })()}
           </div>
           <div className="flex-1">
             <p className={`font-bold ${textColor} text-lg mb-1`}>{ORDER_STATUS_LABELS[currentStatus].done}</p>
@@ -86,7 +87,7 @@ export default function OrderStatusTimeline({
                             : 'bg-brand-200'
                     }`}
                   >
-                    {ORDER_STATUS_ICONS[status]}
+                    {(() => { const Icon = ORDER_STATUS_ICONS[status] as LucideIcon; return <Icon className="w-5 h-5" />; })()}
                   </div>
                   {idx < array.length - 1 && (
                     <div

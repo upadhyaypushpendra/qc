@@ -5,6 +5,7 @@ import { useLogout, useUpdateProfile } from '../hooks/useAuth';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import ProfileHeader from '../components/ProfileHeader';
 import toast from 'react-hot-toast';
+import { User, Bell, MapPin, Package, Pencil, LogOut } from 'lucide-react';
 
 export default function AccountPage() {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function AccountPage() {
                 <p className="text-sm font-semibold text-brand-700">Account Type</p>
                 <p className="text-xs text-brand-600 mt-1">Regular Account</p>
               </div>
-              <span className="text-2xl">👤</span>
+              <User className="w-6 h-6 text-brand-500" />
             </div>
           </div>
 
@@ -95,7 +96,7 @@ export default function AccountPage() {
                   {pushLoading ? '...' : isSubscribed ? 'On' : 'Off'}
                 </button>
               ) : (
-                <span className="text-2xl">🔔</span>
+                <Bell className="w-6 h-6 text-brand-500" />
               )}
             </div>
           </div>
@@ -111,7 +112,7 @@ export default function AccountPage() {
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition"
           >
             <div className="flex items-start gap-4">
-              <span className="text-3xl">📍</span>
+              <MapPin className="w-7 h-7 text-brand-500 flex-shrink-0" />
               <div>
                 <h3 className="font-bold text-brand-700">Manage Addresses</h3>
                 <p className="text-sm text-brand-600 mt-1">Add or edit delivery addresses</p>
@@ -124,7 +125,7 @@ export default function AccountPage() {
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition"
           >
             <div className="flex items-start gap-4">
-              <span className="text-3xl">📦</span>
+              <Package className="w-7 h-7 text-brand-500 flex-shrink-0" />
               <div>
                 <h3 className="font-bold text-brand-700">View Orders</h3>
                 <p className="text-sm text-brand-600 mt-1">Track your purchases</p>
@@ -141,7 +142,7 @@ export default function AccountPage() {
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition md:col-span-2"
           >
             <div className="flex items-start gap-4">
-              <span className="text-3xl">✏️</span>
+              <Pencil className="w-7 h-7 text-brand-500 flex-shrink-0" />
               <div>
                 <h3 className="font-bold text-brand-700">Edit Profile</h3>
                 <p className="text-sm text-brand-600 mt-1">Update your name and personal info</p>
@@ -158,7 +159,7 @@ export default function AccountPage() {
           disabled={logout.isPending}
           className="w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 disabled:bg-red-800 transition"
         >
-          {logout.isPending ? 'Logging out...' : '🚪 Logout'}
+          {logout.isPending ? 'Logging out...' : <span className="flex items-center justify-center gap-2"><LogOut className="w-4 h-4" /> Logout</span>}
         </button>
       </div>
 

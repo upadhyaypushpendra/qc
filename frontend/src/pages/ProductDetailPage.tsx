@@ -1,16 +1,15 @@
-import { useParams } from 'react-router-dom';
-import { useProduct } from '../hooks/useProducts';
-import { useAddToCart, useUpdateCartQuantity, useRemoveFromCart } from '../hooks/useCart';
-import { useCartStore } from '../stores/cartStore';
-import ItemQuantity from '../components/ItemQuantity';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
+import ItemQuantity from '../components/ItemQuantity';
+import { useAddToCart, useUpdateCartQuantity } from '../hooks/useCart';
+import { useProduct } from '../hooks/useProducts';
+import { useCartStore } from '../stores/cartStore';
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: product, isLoading } = useProduct(slug || '');
   const addToCart = useAddToCart();
   const updateQuantity = useUpdateCartQuantity();
-  const removeFromCart = useRemoveFromCart();
   const cartItem = useCartStore((s) => s.items.find((i) => i.productId === slug));
   const cartQty = cartItem?.quantity ?? 0;
 
@@ -31,9 +30,29 @@ export default function ProductDetailPage() {
   if (!product) return <div className="text-brand-600 text-lg">Product not found</div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div>
+    <div className="grid grid-cols-1 gap-8">
+      <div className="relative">
         <img src={product.imageUrl} alt={product.name} className="w-full rounded-lg bg-gray-700 h-96 object-cover" />
+        <div className='absolute bottom-0 right-2 translate-y-1/4'>
+        {cartQty > 0 ? (
+          <ItemQuantity
+            quantity={cartQty}
+            onQuantityChange={(qty) => {
+                updateQuantity.mutate({ productId: product.slug, quantity: qty });
+            }}
+            isLoading={updateQuantity.isPending}
+            minQuantity={0}
+          />
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            disabled={!product.inStock || addToCart.isPending}
+            className={`px-4 py-2 bg-brand-500 text-white-600 rounded-lg font-bold disabled:bg-gray-600 shadow-md transition text-lg ${addToCart.isPending ? 'animate-blink' : ''}`}
+          >
+            {addToCart.isPending ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          </button>
+        )}
+        </div>
       </div>
       <div>
         <h1 className="text-3xl font-bold mb-2 text-brand-800">{product.name}</h1>
@@ -52,28 +71,7 @@ export default function ProductDetailPage() {
           <p className="text-sm text-brand-700"><strong>In Stock:</strong> {product.inStock ? `${product.stockQty} available` : 'Out of stock'}</p>
         </div>
 
-        {cartQty > 0 ? (
-          <ItemQuantity
-            quantity={cartQty}
-            onQuantityChange={(qty) => {
-              if (qty === 0) {
-                removeFromCart.mutate(product.slug);
-              } else {
-                updateQuantity.mutate({ productId: product.slug, quantity: qty });
-              }
-            }}
-            isLoading={updateQuantity.isPending || removeFromCart.isPending}
-            minQuantity={0}
-          />
-        ) : (
-          <button
-            onClick={handleAddToCart}
-            disabled={!product.inStock || addToCart.isPending}
-            className="w-full bg-brand-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-brand-700 disabled:bg-gray-600"
-          >
-            {addToCart.isPending ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
-          </button>
-        )}
+        
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
+import { ShoppingBag, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useCartStore } from '../stores/cartStore';
-import { useRemoveFromCart, useUpdateCartQuantity, useClearCart } from '../hooks/useCart';
 import ItemQuantity from '../components/ItemQuantity';
+import { useClearCart, useUpdateCartQuantity } from '../hooks/useCart';
+import { useCartStore } from '../stores/cartStore';
 
 export default function CartPage() {
   const { items, total } = useCartStore();
-  const removeFromCart = useRemoveFromCart();
   const updateQuantity = useUpdateCartQuantity();
   const clearCart = useClearCart();
 
@@ -20,9 +20,9 @@ export default function CartPage() {
           <p className="text-brand-600 mb-8 text-lg">No items yet. Start shopping to fill your cart with fresh groceries!</p>
           <Link
             to="/products"
-            className="inline-block bg-brand-600 text-white py-4 px-12 rounded-lg font-bold text-lg hover:bg-brand-700 transition transform hover:scale-105 shadow-md"
+            className="inline-flex items-center gap-2 bg-brand-600 text-white py-4 px-12 rounded-lg font-bold text-lg hover:bg-brand-700 transition transform hover:scale-105 shadow-md"
           >
-            🛍️ Continue Shopping
+            <ShoppingBag className="w-5 h-5" /> Continue Shopping
           </Link>
         </div>
       </div>
@@ -44,11 +44,11 @@ export default function CartPage() {
               </div>
               <div className="relative flex flex-col items-end justify-between">
                 <button
-                  onClick={() => removeFromCart.mutate(item.productId)}
-                  disabled={removeFromCart.isPending}
-                  className="text-red-600 text-sm hover:text-red-700 disabled:opacity-50"
+                  onClick={() => updateQuantity.mutate({ productId: item.productId, quantity: 0 })}
+                  disabled={updateQuantity.isPending}
+                  className="text-red-400 text-sm hover:text-red-700 disabled:opacity-50"
                 >
-                  Remove
+                  <Trash2 className="w-6 h-6" />
                 </button>
                 <ItemQuantity
                   quantity={item.quantity}

@@ -5,6 +5,7 @@ import apiClient from '../lib/apiClient';
 import { useCreateOrder } from '../hooks/useOrders';
 import { useCartStore } from '../stores/cartStore';
 import toast from 'react-hot-toast';
+import { Phone, CreditCard } from 'lucide-react';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function CheckoutPage() {
                 >
                   <p className="font-bold text-brand-800">{addr.label}</p>
                   <p className="text-sm text-brand-600">{addr.line1}, {addr.city} {addr.postcode}</p>
-                  {addr.phone && <p className="text-sm text-brand-600">📱 {addr.phone}</p>}
+                  {addr.phone && <p className="text-sm text-brand-600 flex items-center gap-1"><Phone className="w-3 h-3" /> {addr.phone}</p>}
                 </button>
               ))}
             </div>
@@ -110,7 +111,7 @@ export default function CheckoutPage() {
             disabled={createOrder.isPending || !selectedAddressId}
             className="w-full mt-6 bg-brand-600 text-white py-3 rounded-lg font-bold hover:bg-brand-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            {createOrder.isPending ? 'Processing...' : '💳 Pay Now'}
+            {createOrder.isPending ? 'Processing...' : <span className="flex items-center justify-center gap-2"><CreditCard className="w-4 h-4" /> Pay Now</span>}
           </button>
         </div>
       </div>

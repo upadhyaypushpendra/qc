@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useNavbarStore } from '../../stores/navbarStore';
+import { ArrowLeft, Home, User, ShoppingCart } from 'lucide-react';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -26,10 +27,10 @@ export default function Navbar() {
             <>
               <button
                 onClick={() => navigate(-1)}
-                className="text-2xl hover:opacity-80 transition flex-shrink-0"
+                className="hover:opacity-80 transition flex-shrink-0"
                 title="Go back"
               >
-                ←
+                <ArrowLeft className="w-6 h-6" />
               </button>
               <div>
               {customHeading && <h1 className="text-lg font-semibold">{customHeading}</h1>}
@@ -45,10 +46,10 @@ export default function Navbar() {
           {!isHome && (
             <button
               onClick={() => navigate('/')}
-              className="text-2xl hover:opacity-80 transition"
+              className="hover:opacity-80 transition"
               title="Go to home"
             >
-              🏠
+              <Home className="w-6 h-6" />
             </button>
           )}
 
@@ -61,15 +62,15 @@ export default function Navbar() {
                 navigate('/auth/login');
               }
             }}
-            className="text-2xl hover:opacity-80 transition"
+            className="hover:opacity-80 transition"
             title={user ? 'Account' : 'Login'}
           >
-            👤
+            <User className="w-6 h-6" />
           </button>
 
           {/* Cart Button */}
           <Link to="/cart" className="relative">
-            <span className="text-2xl">🛒</span>
+            <ShoppingCart className="w-6 h-6" />
             {itemCount() > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                 {itemCount()}

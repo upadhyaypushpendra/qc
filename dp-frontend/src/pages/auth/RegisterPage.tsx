@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRegister, useVerifyOtp, useResendOtp } from '../../hooks/useAuth';
+import { Truck } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import toast from 'react-hot-toast';
 
@@ -102,7 +103,7 @@ export default function RegisterPage() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-brand-50 to-brand-100 py-12">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-brand-700 mb-2">🚚 Join Our Team</h1>
+          <h1 className="text-3xl font-bold text-brand-700 mb-2 flex items-center justify-center gap-2"><Truck className="w-7 h-7" /> Join Our Team</h1>
           <p className="text-brand-600">
             {step === 'details' ? 'Enter your phone number to get started' : 'Verify your identity'}
           </p>
