@@ -1,14 +1,21 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { useLogout } from '../hooks/useAuth';
+import { useLogout, useUpdateProfile } from '../hooks/useAuth';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import ProfileHeader from '../components/ProfileHeader';
+import toast from 'react-hot-toast';
 
 export default function AccountPage() {
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthStore();
   const logout = useLogout();
+  const updateProfile = useUpdateProfile();
   const { isSubscribed, isSupported, isDenied, isLoading: pushLoading, subscribe, unsubscribe } = usePushNotifications();
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [firstName, setFirstName] = useState(user?.firstName ?? '');
+  const [lastName, setLastName] = useState(user?.lastName ?? '');
 
   const handleLogout = async () => {
     await logout.mutateAsync();
@@ -16,16 +23,29 @@ export default function AccountPage() {
     navigate('/');
   };
 
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfile.mutate(
+      { firstName: firstName.trim(), lastName: lastName.trim() },
+      {
+        onSuccess: () => {
+          toast.success('Profile updated');
+          setEditOpen(false);
+        },
+        onError: () => toast.error('Failed to update profile'),
+      },
+    );
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Profile Header */}
       <ProfileHeader firstName={user?.firstName} lastName={user?.lastName} email={user?.identifier} />
 
       {/* Account Info Grid */}
       <div className="mb-8">
         <h2 className="text-xl font-bold text-brand-700 mb-4">Account Status</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Email/Phone Verification */}
+          {/* Phone */}
           <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
             <div className="flex items-start justify-between">
               <div>
@@ -38,7 +58,7 @@ export default function AccountPage() {
             </div>
           </div>
 
-          {/* Account Age */}
+          {/* Account Type */}
           <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
             <div className="flex items-start justify-between">
               <div>
@@ -48,17 +68,6 @@ export default function AccountPage() {
               <span className="text-2xl">👤</span>
             </div>
           </div>
-
-          {/* Phone (placeholder) */}
-          {/* <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-semibold text-brand-700">Phone Number</p>
-                <p className="text-xs text-brand-600 mt-1">Not added</p>
-              </div>
-              <span className="text-2xl">📱</span>
-            </div>
-          </div> */}
 
           {/* Notifications */}
           <div className="bg-brand-50 border-2 border-brand-200 rounded-lg p-4">
@@ -80,9 +89,7 @@ export default function AccountPage() {
                   onClick={isSubscribed ? unsubscribe : subscribe}
                   disabled={pushLoading}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
-                    isSubscribed
-                      ? 'bg-green-900 text-green-300'
-                      : 'bg-gray-700 text-gray-300'
+                    isSubscribed ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300'
                   } disabled:opacity-50`}
                 >
                   {pushLoading ? '...' : isSubscribed ? 'On' : 'Off'}
@@ -99,7 +106,6 @@ export default function AccountPage() {
       <div className="mb-8">
         <h2 className="text-xl font-bold text-brand-700 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Addresses */}
           <button
             onClick={() => navigate('/addresses')}
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition"
@@ -113,7 +119,6 @@ export default function AccountPage() {
             </div>
           </button>
 
-          {/* Orders */}
           <button
             onClick={() => navigate('/orders')}
             className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition"
@@ -127,44 +132,27 @@ export default function AccountPage() {
             </div>
           </button>
 
-          {/* Settings (placeholder) */}
-          {/* <button
-            disabled
-            className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left opacity-60 cursor-not-allowed"
+          <button
+            onClick={() => {
+              setFirstName(user?.firstName ?? '');
+              setLastName(user?.lastName ?? '');
+              setEditOpen(true);
+            }}
+            className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left hover:shadow-lg hover:border-brand-400 transition md:col-span-2"
           >
             <div className="flex items-start gap-4">
-              <span className="text-3xl">⚙️</span>
+              <span className="text-3xl">✏️</span>
               <div>
-                <h3 className="font-bold text-brand-700">Settings</h3>
-                <p className="text-sm text-brand-600 mt-1">Coming soon</p>
+                <h3 className="font-bold text-brand-700">Edit Profile</h3>
+                <p className="text-sm text-brand-600 mt-1">Update your name and personal info</p>
               </div>
             </div>
-          </button> */}
-
-          {/* Help (placeholder) */}
-          {/* <button
-            disabled
-            className="bg-brand-50 border-2 border-brand-200 rounded-lg p-6 text-left opacity-60 cursor-not-allowed"
-          >
-            <div className="flex items-start gap-4">
-              <span className="text-3xl">❓</span>
-              <div>
-                <h3 className="font-bold text-brand-700">Help & Support</h3>
-                <p className="text-sm text-brand-600 mt-1">Coming soon</p>
-              </div>
-            </div>
-          </button> */}
+          </button>
         </div>
       </div>
 
       {/* Account Actions */}
       <div className="space-y-3">
-        {/* <button
-          disabled
-          className="w-full bg-brand-50 text-brand-600 py-3 rounded-lg font-bold border-2 border-brand-200 opacity-60 cursor-not-allowed transition hover:opacity-40"
-        >
-          ✏️ Edit Profile
-        </button> */}
         <button
           onClick={handleLogout}
           disabled={logout.isPending}
@@ -173,6 +161,53 @@ export default function AccountPage() {
           {logout.isPending ? 'Logging out...' : '🚪 Logout'}
         </button>
       </div>
+
+      {/* Edit Profile Modal */}
+      {editOpen && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-xl font-bold text-brand-700 mb-6">Edit Profile</h2>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-brand-700 mb-2">First Name</label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="John"
+                  className="w-full px-4 py-2 border-2 border-brand-200 bg-brand-50 rounded-lg focus:outline-none focus:border-brand-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-brand-700 mb-2">Last Name</label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Doe"
+                  className="w-full px-4 py-2 border-2 border-brand-200 bg-brand-50 rounded-lg focus:outline-none focus:border-brand-400"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditOpen(false)}
+                  className="flex-1 py-2 border-2 border-brand-200 text-brand-700 rounded-lg font-semibold hover:bg-brand-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updateProfile.isPending}
+                  className="flex-1 py-2 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 disabled:bg-gray-600 transition"
+                >
+                  {updateProfile.isPending ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

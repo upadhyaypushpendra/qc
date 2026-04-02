@@ -8,8 +8,6 @@ interface LoginRequest {
 }
 
 interface RegisterRequest {
-  firstName: string;
-  lastName: string;
   identifier: string;
   role: 'user';
 }
@@ -151,8 +149,24 @@ export function useMe() {
 }
 
 /**
- * Resend OTP
+ * Update profile (firstName, lastName)
  */
+export function useUpdateProfile() {
+  const { user, setAuth } = useAuthStore();
+  const accessToken = useAuthStore((s) => s.accessToken);
+
+  return useMutation({
+    mutationFn: async (data: { firstName: string; lastName: string }) => {
+      const response = await apiClient.patch('/users/profile', data);
+      return response.data;
+    },
+    onSuccess: (updatedUser) => {
+      if (user && accessToken) {
+        setAuth({ ...user, ...updatedUser }, accessToken);
+      }
+    },
+  });
+}
 export function useResendOtp() {
   const { setError } = useAuthStore();
 
