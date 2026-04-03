@@ -23,6 +23,7 @@ import RegisterPage from './pages/auth/RegisterPage';
 // Components
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import AppShell from './components/layout/AppShell';
+import ServerWakingDialog from './components/ServerWakingDialog';
 
 function App() {
   // PWA registration
@@ -49,6 +50,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ServerWakingDialog />
       <Toaster position="bottom-center" />
       <Routes>
         <Route element={<AppShell />}>

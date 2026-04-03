@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
+import { useServerStore } from '../stores/serverStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -31,6 +32,10 @@ let failedQueue: Array<{
 apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
+    if (error.response?.status === 503 || (!error.response && error.code === 'ERR_NETWORK')) {
+      useServerStore.getState().setServerDown(true);
+    }
+
     const original = error.config;
     const isAuthMutationEndpoint = original.url?.includes('/auth/login') ||
                                    original.url?.includes('/auth/register') ||
