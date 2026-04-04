@@ -1,5 +1,6 @@
 import { useOrders } from '../hooks/useOrders';
 import { Link } from 'react-router-dom';
+import { OrderListSkeleton } from '../components/Skeletons';
 import {
   ORDER_STATUS_COLORS,
   formatOrderStatus,
@@ -14,7 +15,7 @@ export default function OrderHistoryPage() {
       <h1 className="text-3xl font-bold mb-6 text-brand-700">My Orders</h1>
 
       {isLoading ? (
-        <div className="text-brand-600">Loading orders...</div>
+        <OrderListSkeleton count={4} />
       ) : orders && orders.length > 0 ? (
         <div className="space-y-4">
           {orders.map((order: any) => {

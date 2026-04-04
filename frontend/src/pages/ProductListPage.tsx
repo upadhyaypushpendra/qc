@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CategorySidebar from '../components/CategorySidebar';
 import ProductCard from '../components/ProductCard';
+import { ProductGridSkeleton } from '../components/Skeletons';
 import { useProducts } from '../hooks/useProducts';
 import type { Product } from '../interfaces/products';
 
@@ -9,7 +10,7 @@ function Products({ subCategoryId }: { subCategoryId?: string }) {
   const { data, isLoading } = useProducts(page, 20, subCategoryId);
 
   return isLoading ? (
-    <div className="text-brand-600">Loading products...</div>
+    <ProductGridSkeleton count={8} cols={2} />
   ) : data?.data?.length === 0 ? (
     <div className="text-center py-12">
       <p className="text-brand-600 text-lg">No products available</p>

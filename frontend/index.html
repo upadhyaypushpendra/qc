@@ -8,8 +8,30 @@
     <meta name="theme-color" content="#1a1625" />
     <meta name="description" content="Quick and easy grocery delivery application" />
     <title>QuickGrocery — Fast Grocery Delivery</title>
+    <style>
+      #root:empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        background-color: #111827;
+      }
+      #root:empty::before {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 3px solid #374151;
+        border-top-color: #7c3aed;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
-  <body>
+  <body style="margin:0;background:#111827">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

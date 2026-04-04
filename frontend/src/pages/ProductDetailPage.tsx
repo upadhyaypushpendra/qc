@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import ItemQuantity from '../components/ItemQuantity';
+import { ProductDetailSkeleton } from '../components/Skeletons';
 import { useAddToCart, useUpdateCartQuantity } from '../hooks/useCart';
 import { useProduct } from '../hooks/useProducts';
 import { useCartStore } from '../stores/cartStore';
@@ -26,7 +27,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  if (isLoading) return <div className="text-brand-600 text-lg">Loading product...</div>;
+  if (isLoading) return <ProductDetailSkeleton />;
   if (!product) return <div className="text-brand-600 text-lg">Product not found</div>;
 
   return (

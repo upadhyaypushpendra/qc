@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import OrderDetails from '../components/OrderDetails';
 import OrderStatusTimeline from '../components/OrderStatusTimeline';
+import { OrderTrackingSkeleton } from '../components/Skeletons';
 import { useNavbarHeading } from '../hooks/useNavbarHeading';
 import { useOrder } from '../hooks/useOrders';
 import { useOrderTracking } from '../hooks/useOrderTracking';
@@ -19,7 +20,7 @@ export default function OrderTrackingPage() {
   // Set navbar heading 
   useNavbarHeading('Order Details', order ? `Order #${order.id.slice(-8)}` : null);
 
-  if (isLoading) return <div className="text-brand-600">Loading order...</div>;
+  if (isLoading) return <OrderTrackingSkeleton />;
   if (!order) return <div className="text-brand-600">Order not found</div>;
 
   const allEvents = [...(order.statusHistory || []), ...statusEvents]

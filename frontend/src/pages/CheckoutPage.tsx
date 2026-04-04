@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../lib/apiClient';
 import { useCreateOrder } from '../hooks/useOrders';
@@ -40,6 +40,18 @@ export default function CheckoutPage() {
     handleCheckout(selectedAddressId);
   };
 
+  const handleAddressSelect = useCallback((addressId: string) => {
+    setSelectedAddressId(addressId);
+  }, [setSelectedAddressId]);
+
+  useEffect(() => {
+    if (addresses && addresses.length > 0 && !selectedAddressId) {
+      const defaultAddress = addresses.find((addr: any) => addr.isDefault) || addresses[0];
+
+      handleAddressSelect(defaultAddress.id);
+    }
+  }, [addresses, selectedAddressId, handleAddressSelect]);
+
   if (items.length === 0) {
     return <div className="text-center py-12 text-brand-600 text-lg">Cart is empty</div>;
   }
@@ -56,16 +68,19 @@ export default function CheckoutPage() {
               {addresses.map((addr: any) => (
                 <button
                   key={addr.id}
-                  onClick={() => setSelectedAddressId(addr.id)}
-                  className={`w-full text-left p-4 border-2 rounded-lg transition ${
-                    selectedAddressId === addr.id
+                  onClick={() => handleAddressSelect(addr.id)}
+                  className={`w-full text-left p-4 border-2 rounded-lg transition ${selectedAddressId === addr.id
                       ? 'bg-brand-100 border-brand-500'
                       : 'border-brand-300 hover:bg-brand-100 hover:border-brand-500'
-                  } text-brand-700`}
+                    } text-brand-700`}
                 >
                   <p className="font-bold text-brand-800">{addr.label}</p>
                   <p className="text-sm text-brand-600">{addr.line1}, {addr.city} {addr.postcode}</p>
-                  {addr.phone && <p className="text-sm text-brand-600 flex items-center gap-1"><Phone className="w-3 h-3" /> {addr.phone}</p>}
+                  {addr.phone && (
+                    <p className="text-sm text-brand-600 flex items-center gap-1">
+                      <Phone className="w-3 h-3" /> {addr.phone}
+                    </p>
+                  )}
                 </button>
               ))}
             </div>

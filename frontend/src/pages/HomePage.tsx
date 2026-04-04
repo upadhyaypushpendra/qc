@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import OrderStatusBadge from '../components/OrderStatusBadge';
 import ProductCard from '../components/ProductCard';
 import SearchBar from '../components/SearchBar';
+import { CategoryGridSkeleton, ProductGridSkeleton } from '../components/Skeletons';
 import { useOrders } from '../hooks/useOrders';
 import { useCategories, useMyFrequentProducts, useTopProducts } from '../hooks/useProducts';
 import { useAuthStore } from '../stores/authStore';
@@ -34,7 +35,7 @@ export default function HomePage() {
           {user && myFrequent ? 'Your frequent purchases' : 'Popular products'}
         </h2>
         {recommendationsLoading ? (
-          <div className="text-brand-600">Loading recommendations...</div>
+          <ProductGridSkeleton count={6} cols={3} small />
         ) : recommendations?.length === 0 ? (
           <p className="text-brand-600">No recommendations available</p>
         ) : (
@@ -52,7 +53,7 @@ export default function HomePage() {
 
       {/* Categories Section */}
       {categoriesLoading ? (
-        <div>Loading categories...</div>
+        <CategoryGridSkeleton count={6} />
       ) : (
         <div>
           <h2 className="text-xl font-bold mb-4 text-brand-700">Shop by Category</h2>
