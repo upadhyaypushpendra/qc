@@ -30,12 +30,12 @@ export default function SearchBar({ categories = [] }: SearchBarProps) {
   }, [categories.length]);
 
   const getCurrentPlaceholder = () => {
-    return `Search '${categories[displayIndex]?.name}'`;
+    return `Search '${categories[displayIndex]?.name ?? 'milk'}'`;
   };
 
   const getNextPlaceholder = () => {
     const nextIndex = (displayIndex + 1) % categories.length;
-    return `Search '${categories[nextIndex]?.name}'`;
+    return `Search '${categories[nextIndex]?.name ?? 'milk'}'`;
   };
 
   return (
