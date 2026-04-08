@@ -71,16 +71,16 @@ export default function CheckoutPage() {
                   key={addr.id}
                   onClick={() => handleAddressSelect(addr.id)}
                   className={`w-full text-left p-4 border-2 rounded-lg transition ${selectedAddressId === addr.id
-                      ? 'bg-brand-100 border-brand-500'
-                      : 'border-brand-300 hover:bg-brand-100 hover:border-brand-500'
-                    } text-brand-700`}
+                    ? 'bg-brand-100 border-brand-500'
+                    : 'border-brand-300 hover:bg-brand-100 hover:border-brand-500'
+                    }`}
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-bold text-brand-800">{addr.label}</p>
-                      <p className="text-sm text-brand-600">{addr.line1}, {addr.city} {addr.postcode}</p>
+                      <p className="font-bold text-white-800">{addr.label}</p>
+                      <p className="text-sm text-white-600">{addr.line1}, {addr.city} {addr.postcode}</p>
                       {addr.phone && (
-                        <p className="text-sm text-brand-600 flex items-center gap-1">
+                        <p className="text-sm text-white-600 flex items-center gap-1">
                           <Phone className="w-3 h-3" /> {addr.phone}
                         </p>
                       )}
@@ -93,7 +93,7 @@ export default function CheckoutPage() {
               ))}
               <button
                 onClick={() => navigate('/addresses/new')}
-                className="w-full text-left p-4 border-2 border-dashed border-brand-300 rounded-lg hover:border-brand-500 hover:bg-brand-50 transition text-brand-600 flex items-center gap-2"
+                className="w-full text-left p-4 border-2 border-brand-300 rounded-lg hover:border-brand-500 hover:bg-brand-50 transition text-brand-600 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 <span className="font-medium">Add New Address</span>
@@ -115,11 +115,17 @@ export default function CheckoutPage() {
 
       <div className="bg-brand-50 rounded-lg p-4 h-fit border-2 border-brand-200">
         <h2 className="text-lg font-bold mb-4 text-brand-700">Order Summary</h2>
-        <div className="space-y-2 text-sm mb-6 text-brand-700">
+        <div className="space-y-2 text-sm mb-6 text-white-700">
           {items.map((item) => (
-            <div key={item.productId} className="flex justify-between">
-              <span>{item.name} x{item.quantity}</span>
-              <span>Rs. {(item.price * item.quantity).toFixed(2)}</span>
+            <div key={item.productId} className="flex items-start justify-between gap-3">
+              <div className='flex items-center gap-2'>
+                <img src={item.imageUrl || ""} alt={item.name} className="w-6 h-6 object-cover rounded" />
+                <p>
+                  <span>{item.name}</span><br />
+                  <span className='text-xs'>x{item.quantity}</span>
+                </p>
+              </div>
+              <span className='min-w-[80px] text-right'>Rs. {(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
         </div>

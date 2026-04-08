@@ -32,7 +32,7 @@ let failedQueue: Array<{
 apiClient.interceptors.response.use(
   (res) => res,
   async (error) => {
-    if (error.response?.status === 503 || (!error.response && error.code === 'ERR_NETWORK')) {
+    if ([503, 500].includes(error.response?.status) || (!error.response && error.code === 'ERR_NETWORK')) {
       useServerStore.getState().setServerDown(true);
     }
 
