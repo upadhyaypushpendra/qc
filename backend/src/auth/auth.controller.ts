@@ -42,10 +42,11 @@ export class AuthController {
       throw new Error('User not found after OTP verification');
     }
 
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({
@@ -68,10 +69,11 @@ export class AuthController {
       return res.status(401).json({ message: 'No refresh token' });
     }
     const tokens = await this.authService.refresh(refreshToken);
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.json({ accessToken: tokens.accessToken });
