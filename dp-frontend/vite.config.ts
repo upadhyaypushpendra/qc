@@ -7,8 +7,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'icons/*.png'],
+      devOptions: {
+        enabled: true,
+      },
       manifest: {
         name: 'QuickGrocery - Delivery Partner',
         short_name: 'QG Delivery',
@@ -38,6 +41,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\/api\/products/,
