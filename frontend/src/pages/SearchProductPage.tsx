@@ -189,8 +189,6 @@ export default function SearchProductPage() {
                       <ProductCard
                         key={product._id}
                         product={product}
-                        onAddToCart={handleAddToCart}
-                        isAddingToCart={addToCart.isPending}
                       />
                     ))}
                   </div>

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useServerStore } from '../stores/serverStore';
 import { Loader } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { useServerStore } from '../stores/serverStore';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 const HEALTH_URL = `${API_BASE}/health`;
@@ -8,17 +8,11 @@ const POLL_INTERVAL = 5000;
 
 export default function ServerWakingDialog() {
   const { isServerDown, setServerDown } = useServerStore();
-  const [dots, setDots] = useState('');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const dotsRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!isServerDown) return;
-
-    // Animated dots
-    dotsRef.current = setInterval(() => {
-      setDots((d) => (d.length >= 3 ? '' : d + '.'));
-    }, 500);
 
     // Poll health endpoint
     intervalRef.current = setInterval(async () => {
